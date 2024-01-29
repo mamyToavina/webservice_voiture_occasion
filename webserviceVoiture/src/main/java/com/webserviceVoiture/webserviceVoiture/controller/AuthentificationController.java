@@ -99,6 +99,7 @@ public class AuthentificationController {
     
     @PostMapping("/login")
     public Map<String,String> login(String username,String password){
+        System.out.println("misy miantso io login io aaan");
         Map<String, String> response = new HashMap<>();
         
         try{
