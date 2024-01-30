@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @author TOAVINA
  */
 
-@Controller
+@RestController
 @RequestMapping("/admin")
 public class AdminController {
     @Autowired
