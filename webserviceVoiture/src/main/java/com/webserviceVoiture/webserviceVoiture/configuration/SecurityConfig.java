@@ -88,6 +88,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(ar -> ar
                         .requestMatchers(
                                 // Autoriser l'accès sans authentification à ces URL
+                                "/error",
                                 "/test/login/**",
                                 "/test/register/**",
                                 "/api/ads/**",
