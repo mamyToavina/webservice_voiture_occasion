@@ -16,6 +16,7 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -65,7 +66,7 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
+    /*@Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .sessionManagement(sm->sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -76,7 +77,36 @@ public class SecurityConfig {
                 //.httpBasic(Customizer.withDefaults())
                 .oauth2ResourceServer(oa->oa.jwt(Customizer.withDefaults()))
                 .build();
+    }*/
+    
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        return http
+                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .csrf(CsrfConfigurer::disable)
+                .cors(Customizer.withDefaults())
+                .authorizeHttpRequests(ar -> ar
+                        .requestMatchers(
+                                // Autoriser l'accès sans authentification à ces URL
+                                "/test/login/**",
+                                "/test/register/**",
+                                "/api/ads/**",
+                                "/api/findAds/**",
+                                "/api/findAdsByUserId/**",
+                                "/api/findAdsByStatus/**",
+                                "/api/findAdsByUserIdAndStatus/**",
+                                "/api/markAdAsSold/**",
+                                "/api/search/**",
+                                "/admin/statistics/**"
+                        ).permitAll()
+                        // Exiger une authentification pour toutes les autres URL
+                        .anyRequest().authenticated()
+                )
+                // Activer la validation du jeton JWT
+                .oauth2ResourceServer(oa -> oa.jwt(Customizer.withDefaults()))
+                .build();
     }
+
 
     @Bean
     public AuthenticationManager authenticationManager(UserDetailsService userDetailsService) throws Exception {
