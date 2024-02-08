@@ -57,7 +57,7 @@ public class AuthentificationController {
     }
     
     
-    @PutMapping("/register")
+    @PostMapping("/register")
     public ResponseEntity<Map<String, Object>> registerUser(@RequestBody User user) {
         Map<String, Object> response = new HashMap<>();
 
