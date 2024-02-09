@@ -26,15 +26,11 @@ import java.io.InputStream;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -42,7 +38,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 /**
  *
@@ -104,40 +99,6 @@ public class AdService {
         Pageable pageable = PageRequest.of(page - 1, 10); // 10 annonces par page
         return adRepository.searchAdsByCriteria(categoryId, brandId, minPrice, maxPrice, minKilometrage, maxKilometrage, pageable);
     }
-
-    /*public List<Image> uploadPhotos(List<MultipartFile> files) throws IOException {
-        List<Image> images = new ArrayList<>();
-        for (MultipartFile file : files) {
-            String uniqueFileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
-            saveFile(file, uniqueFileName);
-            Image image = new Image();
-            
-            String fileUri = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/image/")
-                .path(uniqueFileName)
-                .toUriString();
-            
-            image.setChemin(fileUri);
-            images.add(image);
-        }
-        return images;
-    }
-
-    private void saveFile(MultipartFile file, String fileName) throws IOException {
-        try {
-            File f = new ClassPathResource("").getFile();
-            final Path path = Paths.get(f.getAbsolutePath() + File.separator + "static" + File.separator + "images");
-
-            if (!Files.exists(path)) {
-                Files.createDirectories(path);
-            }
-
-            Path filePath = path.resolve(fileName);
-            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
-            throw new IOException("Erreur lors de l'upload du fichier", e);
-        }
-    }*/
     
     public List<Image> uploadPhotos(List<MultipartFile> files) throws IOException {
         List<Image> images = new ArrayList<>();

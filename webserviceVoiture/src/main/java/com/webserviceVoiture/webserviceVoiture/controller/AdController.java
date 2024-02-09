@@ -9,6 +9,7 @@ import com.webserviceVoiture.webserviceVoiture.service.BrandService;
 import com.webserviceVoiture.webserviceVoiture.service.CategoryService;
 import com.webserviceVoiture.webserviceVoiture.service.UserService;
 import com.webserviceVoiture.webserviceVoiture.voiture_model.Ad;
+import com.webserviceVoiture.webserviceVoiture.voiture_model.Brand;
 import com.webserviceVoiture.webserviceVoiture.voiture_model.Category;
 import com.webserviceVoiture.webserviceVoiture.voiture_model.CustomResponse;
 import java.util.List;
@@ -130,6 +131,12 @@ public class AdController {
     public ResponseEntity<List<Ad>> getAllAds() {
         List<Ad> ads = adService.getAllAds();
         return new ResponseEntity<>(ads, HttpStatus.OK);
+    }
+    
+    @GetMapping("/findAllBrands")
+    public ResponseEntity<List<Brand>> getAllBrands() {
+        List<Brand> brands = brandService.getAllBrands();
+        return new ResponseEntity<>(brands, HttpStatus.OK);
     }
     
     @GetMapping("/findAllCategory")
