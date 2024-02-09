@@ -4,6 +4,12 @@
  */
 package com.webserviceVoiture.webserviceVoiture.service;
 
+import com.google.auth.Credentials;
+import com.google.auth.oauth2.GoogleCredentials;
+import com.google.cloud.storage.BlobId;
+import com.google.cloud.storage.BlobInfo;
+import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.StorageOptions;
 import com.webserviceVoiture.webserviceVoiture.repository.AdRepository;
 import com.webserviceVoiture.webserviceVoiture.repository.CategoryRepository;
 import com.webserviceVoiture.webserviceVoiture.repository.ImageRepository;
@@ -12,8 +18,13 @@ import com.webserviceVoiture.webserviceVoiture.voiture_model.Category;
 import com.webserviceVoiture.webserviceVoiture.voiture_model.CategoryStatistics;
 import com.webserviceVoiture.webserviceVoiture.voiture_model.Image;
 import com.webserviceVoiture.webserviceVoiture.voiture_model.ResponseMessage;
+import jakarta.servlet.ServletContext;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -48,6 +59,11 @@ public class AdService {
     
     @Autowired
     private CategoryRepository categoryRepository;
+    
+    @Autowired
+    private ServletContext servletContext;
+    
+    
 
     public void createAd(Ad ad, List<MultipartFile> files) throws IOException {
         List<Image> images = uploadPhotos(files);
@@ -89,7 +105,7 @@ public class AdService {
         return adRepository.searchAdsByCriteria(categoryId, brandId, minPrice, maxPrice, minKilometrage, maxKilometrage, pageable);
     }
 
-    public List<Image> uploadPhotos(List<MultipartFile> files) throws IOException {
+    /*public List<Image> uploadPhotos(List<MultipartFile> files) throws IOException {
         List<Image> images = new ArrayList<>();
         for (MultipartFile file : files) {
             String uniqueFileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
@@ -121,8 +137,48 @@ public class AdService {
         } catch (IOException e) {
             throw new IOException("Erreur lors de l'upload du fichier", e);
         }
+    }*/
+    
+    public List<Image> uploadPhotos(List<MultipartFile> files) throws IOException {
+        List<Image> images = new ArrayList<>();
+        for (MultipartFile file : files) {
+            String uniqueFileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+            File fichier = this.convertToFile(file, uniqueFileName);     
+            String fileUri = saveFile(fichier, uniqueFileName);
+            Image image = new Image();
+            image.setChemin(fileUri);
+            images.add(image);
+        }
+        return images;
+    }
+
+    private String saveFile(File file, String fileName) throws IOException {
+        BlobId blobId = BlobId.of("voiture-adb3e.appspot.com", fileName); // Replace with your bucker name
+        BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("media").build();
+        InputStream inputStream = AdService.class.getClassLoader().getResourceAsStream("voiture-adb3e-firebase-adminsdk-xy24c-df550d9160.json"); // change the file name with your one
+        Credentials credentials = GoogleCredentials.fromStream(inputStream);
+        Storage storage = StorageOptions.newBuilder().setCredentials(credentials).build().getService();
+        storage.create(blobInfo, Files.readAllBytes(file.toPath()));
+
+        String DOWNLOAD_URL = "https://firebasestorage.googleapis.com/v0/b/voiture-adb3e.appspot.com/o/%s?alt=media";
+        return String.format(DOWNLOAD_URL, URLEncoder.encode(fileName, StandardCharsets.UTF_8));
     }
     
+    
+    private File convertToFile(MultipartFile multipartFile, String fileName) throws IOException {
+      File tempFile = new File(fileName);
+      try (FileOutputStream fos = new FileOutputStream(tempFile)) {
+          fos.write(multipartFile.getBytes());
+          fos.close();
+      }
+      return tempFile;
+    }
+    
+
+    private String getExtension(String fileName) {
+        return fileName.substring(fileName.lastIndexOf("."));
+    }
+
     public ResponseEntity<?> markAd(Long adId,int valeur) {
         try {
             Ad ad = adRepository.findById(adId).orElseThrow(() -> new RuntimeException("Annonce non trouvée"));

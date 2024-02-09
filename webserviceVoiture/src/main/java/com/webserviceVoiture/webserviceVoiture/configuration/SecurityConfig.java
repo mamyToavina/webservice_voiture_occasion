@@ -91,6 +91,8 @@ public class SecurityConfig {
                         .requestMatchers(
                                 // Autoriser l'accès sans authentification à ces URL
                                 "/error",
+                                "/api/findAllAds",
+                                "/api/findAllCategory",
                                 "/test/login/**",
                                 "/test/register/**",
                                 "/api/ads/**",

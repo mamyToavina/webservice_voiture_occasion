@@ -9,6 +9,7 @@ import com.webserviceVoiture.webserviceVoiture.service.BrandService;
 import com.webserviceVoiture.webserviceVoiture.service.CategoryService;
 import com.webserviceVoiture.webserviceVoiture.service.UserService;
 import com.webserviceVoiture.webserviceVoiture.voiture_model.Ad;
+import com.webserviceVoiture.webserviceVoiture.voiture_model.Category;
 import com.webserviceVoiture.webserviceVoiture.voiture_model.CustomResponse;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,6 +73,7 @@ public class AdController {
 
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (Exception e) {
+            System.out.println("ito n erreur a");
             e.printStackTrace();
             CustomResponse<Ad> response = new CustomResponse<>();
             response.setStatus("error");
@@ -123,5 +125,18 @@ public class AdController {
         Page<Ad> ads = adService.searchAdsByCriteria(categoryId, brandId, minPrice, maxPrice, minKilometrage, maxKilometrage, page);
         return new ResponseEntity<>(ads, HttpStatus.OK);
     }
+    
+    @GetMapping("/findAllAds")
+    public ResponseEntity<List<Ad>> getAllAds() {
+        List<Ad> ads = adService.getAllAds();
+        return new ResponseEntity<>(ads, HttpStatus.OK);
+    }
+    
+    @GetMapping("/findAllCategory")
+    public ResponseEntity<List<Category>> getAllCategory() {
+        List<Category> category = categoryService.getAllCategories();
+        return new ResponseEntity<>(category, HttpStatus.OK);
+    }
+    
 }
 

@@ -22,7 +22,6 @@ public class BrandService {
     @Autowired
     private BrandRepository brand_repo;
     
-    
     public Brand findById(Long id){
         try {
             Optional<Brand> brandOptional =  brand_repo.findById(id);
