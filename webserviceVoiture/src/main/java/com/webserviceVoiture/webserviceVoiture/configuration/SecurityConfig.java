@@ -93,6 +93,7 @@ public class SecurityConfig {
                                 "/error",
                                 "/api/findAllAds",
                                 "/api/findAllCategory",
+                                "/api/findAllBrands",
                                 "/test/login/**",
                                 "/test/register/**",
                                 "/api/ads/**",
