@@ -4,6 +4,7 @@
  */
 package com.webserviceVoiture.webserviceVoiture.voiture_model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.webserviceVoiture.webserviceVoiture.configuration.user_model.User;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -44,6 +45,7 @@ public class Ad {
     //1 en attente 2: publie 3: vendu
     private int statut = 1;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User utilisateur;

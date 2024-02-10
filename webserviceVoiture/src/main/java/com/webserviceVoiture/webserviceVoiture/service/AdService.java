@@ -144,6 +144,7 @@ public class AdService {
         try {
             Ad ad = adRepository.findById(adId).orElseThrow(() -> new RuntimeException("Annonce non trouvée"));
             ad.setStatut(valeur);
+            
             if(valeur == 2){
                 ad.setDateVente(LocalDateTime.now());
             }
